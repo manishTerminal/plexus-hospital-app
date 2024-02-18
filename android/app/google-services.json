@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "599887156921",
+    "project_id": "plexusmedcare-96eef",
+    "storage_bucket": "plexusmedcare-96eef.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:599887156921:android:7bf537c22dc32d4316ed68",
+        "android_client_info": {
+          "package_name": "com.plexusmedcare"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCkKcAK_fStzQ2jpRK8HW3O7YAMNr7Fa7I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
