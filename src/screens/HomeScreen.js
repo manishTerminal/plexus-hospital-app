@@ -1,7 +1,6 @@
 import React from 'react';
 import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { PRIMARY_COLOR, SECONDARY_COLOR } from '../utils/Colors';
 
 const HomeScreen = () => {
   const navigation = useNavigation();
@@ -24,19 +23,19 @@ const HomeScreen = () => {
             <Text style={styles.font}>Services</Text>
           </View>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.tab} onPress={() => navigation.navigate("Contactus")}>
+        <TouchableOpacity style={styles.tab} onPress={() => navigation.navigate("ContactUs")}>
           <View style={styles.tabContent}>
             <Image source={require("../../assets/images/contact-form.png")} />
             <Text style={styles.font}>Contact Us</Text>
           </View>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.tab}>
+        <TouchableOpacity style={styles.tab} onPress={()=>navigation.navigate("AboutUs")}>
           <View style={styles.tabContent}>
             <Image source={require("../../assets/images/about-us.png")} />
             <Text style={styles.font}>About Us</Text>
           </View>
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.tab, styles.car]}>
+        <TouchableOpacity style={[styles.tab, styles.car]} onPress={()=>navigation.navigate("Feedback")}>
           <View style={styles.tabContent}>
             <Image source={require("../../assets/images/customer-feedback.png")} />
             <Text style={styles.font}>Feedback</Text>
