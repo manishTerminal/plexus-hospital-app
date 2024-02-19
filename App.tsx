@@ -1,4 +1,3 @@
-import 'react-native-gesture-handler';
 import React, { useState, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import MainNavigator from './src/navigation/MainNavigator';
@@ -19,9 +18,11 @@ const App = () => {
   }, []);
 
   return (
+  
     <NavigationContainer>
       {userSignedIn ? <MyTabs /> : <MainNavigator />}
     </NavigationContainer>
+  
   );
 };
 
