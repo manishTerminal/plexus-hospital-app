@@ -1,20 +1,38 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, StyleSheet, Alert, Platform, Button } from 'react-native';
+import React, {useState, useEffect, useRef} from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  Alert,
+  Platform,
+  Button,
+  TouchableOpacity,
+} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
-import { Picker } from '@react-native-picker/picker';
+import {Picker} from '@react-native-picker/picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { PRIMARY_COLOR } from '../utils/Colors';
+import {PRIMARY_COLOR, SECONDARY_COLOR} from '../utils/Colors';
+import LinearGradient from 'react-native-linear-gradient';
 
-const BookingScreen = () => {
+const BookingScreen = ({navigation}) => {
   const [doctors, setDoctors] = useState([]);
-  const [selectedDoctor, setSelectedDoctor] = useState('');
+  const [selectedDoctor, setSelectedDoctor] = useState('placeholder');
   const [patientName, setPatientName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [bookingDate, setBookingDate] = useState(new Date());
-  const [dateDisplay, setDateDisplay] = useState('Choose Date'); // Display for the date
-  const [timeDisplay, setTimeDisplay] = useState('Choose Time'); // Display for the time
+  const [dateDisplay, setDateDisplay] = useState('dd/mm/yyyy'); // Display for the date
+  const [timeDisplay, setTimeDisplay] = useState('--:-- am/pm'); // Display for the time
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
+
+  const [doctorError, setDoctorError] = useState('');
+  const [patientNameError, setPatientNameError] = useState('');
+  const [phoneNumberError, setPhoneNumberError] = useState('');
+  const [bookingDateError, setBookingDateError] = useState('');
+
+  const dateInputRef = useRef(null);
+  const timeInputRef = useRef(null);
 
   useEffect(() => {
     const fetchDoctors = async () => {
@@ -29,18 +47,77 @@ const BookingScreen = () => {
   }, []);
 
   const handleBookNow = async () => {
+    let isValid = true;
+
+    // Reset error messages
+    setDoctorError('');
+    setPatientNameError('');
+    setPhoneNumberError('');
+    setBookingDateError('');
+
+    // Validate selected doctor
+    if (!selectedDoctor || selectedDoctor === 'placeholder') {
+      setDoctorError('Please select a doctor.');
+      isValid = false;
+    }
+
+    // Validate patient name
+    if (!patientName.trim()) {
+      setPatientNameError('Please enter the patient name.');
+      isValid = false;
+    }
+
+    // Validate phone number
+    if (!phoneNumber.trim()) {
+      setPhoneNumberError('Please enter a phone number.');
+      isValid = false;
+    }
+
+    // Add your logic for validating bookingDate if necessary
+
+    if (!isValid) return; // Stop the booking process if validation fail
+
+    if (selectedDoctor === 'placeholder') {
+      Alert.alert('Error', 'Please select a doctor.');
+      return;
+    }
     try {
-      await firestore().collection('Appointments').add({
-        doctorId: selectedDoctor,
-        patientName,
-        phoneNumber,
-        bookingDate: firestore.Timestamp.fromDate(bookingDate),
-      });
-      Alert.alert('Success', 'Appointment booked successfully');
+      await firestore()
+        .collection('Appointments')
+        .add({
+          doctorId: selectedDoctor,
+          patientName,
+          phoneNumber,
+          bookingDate: firestore.Timestamp.fromDate(bookingDate),
+        });
+      // Alert.alert('Success', 'Appointment booked successfully');
+
+      setSelectedDoctor(''); // Reset to placeholder value
+      setPatientName('');
+      setPhoneNumber('');
+      setBookingDate(new Date()); // Reset to current date or you can set a specific default date
+      setDateDisplay('dd/mm/yyyy'); // Reset the display for date
+      setTimeDisplay('--:-- am/pm'); // Reset the display for time
     } catch (error) {
       console.error(error);
       Alert.alert('Error', 'There was an issue booking the appointment');
     }
+
+    // Assuming booking is successful and you have the necessary booking info
+    const doctorName = doctors.find(doc => doc.id === selectedDoctor)?.name;
+    const formattedDate = bookingDate.toLocaleDateString();
+    const formattedTime = bookingDate.toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+
+    // Navigate to SuccessfulBooking screen with booking details
+    navigation.navigate('SuccessfulBooking', {
+      doctorName: doctorName,
+      patientName: patientName,
+      bookingDate: formattedDate,
+      bookingTime: formattedTime,
+    });
   };
 
   const onDateChange = (event, selectedValue) => {
@@ -48,53 +125,106 @@ const BookingScreen = () => {
     if (selectedValue && event.type === 'set') {
       setBookingDate(selectedValue);
       setDateDisplay(selectedValue.toLocaleDateString());
+
+      dateInputRef.current?.blur();
+    } else {
+      setShowDatePicker(false); // Hide date picker after selection
     }
-    setShowDatePicker(false); // Hide date picker after selection
+    setTimeout(() => setShowDatePicker(false), 200);
   };
 
   const onTimeChange = (event, selectedValue) => {
     setShowTimePicker(Platform.OS === 'ios');
     if (selectedValue && event.type === 'set') {
-      setBookingDate((prevState) => new Date(
-        prevState.setHours(selectedValue.getHours(), selectedValue.getMinutes())
-      ));
-      setTimeDisplay(selectedValue.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }));
+      setBookingDate(
+        prevState =>
+          new Date(
+            prevState.setHours(
+              selectedValue.getHours(),
+              selectedValue.getMinutes(),
+            ),
+          ),
+      );
+      setTimeDisplay(
+        selectedValue.toLocaleTimeString('en-US', {
+          hour: '2-digit',
+          minute: '2-digit',
+        }),
+      );
+      timeInputRef.current?.blur();
+    } else {
+      setShowTimePicker(false); // Hide time picker after selection
     }
-    setShowTimePicker(false); // Hide time picker after selection
+    setTimeout(() => setShowTimePicker(false), 200);
   };
 
   return (
     <View style={styles.container}>
-      <Text>Select a Doctor:</Text>
-      <Picker
-        selectedValue={selectedDoctor}
-        onValueChange={(itemValue) => setSelectedDoctor(itemValue)}
-        style={styles.picker}>
-        {doctors.map((doctor) => (
-          <Picker.Item key={doctor.id} label={doctor.name} value={doctor.id} />
-        ))}
-      </Picker>
+      <LinearGradient
+        colors={['#44b678', '#44b678']} // Gradient colors
+        start={{x: 0, y: 0}}
+        end={{x: 1, y: 1}} // Gradient direction
+        style={styles.pickerContainer}>
+        <Picker
+          selectedValue={selectedDoctor}
+          onValueChange={itemValue => {
+            if (itemValue !== 'placeholder') {
+              setSelectedDoctor(itemValue);
+              setDoctorError('');
+            }
+          }}
+          style={styles.picker}>
+          <Picker.Item label="Choose a Doctor" value="placeholder" />
+          {doctors.map(doctor => (
+            <Picker.Item
+              key={doctor.id}
+              label={doctor.name}
+              value={doctor.id}
+            />
+          ))}
+        </Picker>
+      </LinearGradient>
+      {doctorError ? <Text style={styles.errorText}>{doctorError}</Text> : null}
+      {/* </View> */}
 
       <TextInput
         style={styles.input}
         value={patientName}
-        onChangeText={setPatientName}
+        onChangeText={text => {
+          setPatientName(text);
+          setPatientNameError(''); // Clear error on change
+        }}
+        placeholderTextColor="#7B8788"
         placeholder="Patient Name"
       />
-      <TextInput
-        style={styles.input}
-        value={phoneNumber}
-        onChangeText={setPhoneNumber}
-        placeholder="Phone Number"
-        keyboardType="phone-pad"
-      />
+      {patientNameError ? (
+        <Text style={styles.errorText}>{patientNameError}</Text>
+      ) : null}
 
       <TextInput
         style={styles.input}
-        value={dateDisplay}
-        onFocus={() => setShowDatePicker(true)}
-        showSoftInputOnFocus={false}
+        value={phoneNumber}
+        onChangeText={text => {
+          setPhoneNumber(text);
+          setPhoneNumberError(''); // Clear error on change
+        }}
+        placeholder="Phone Number"
+        placeholderTextColor="#7B8788"
+        keyboardType="phone-pad"
       />
+      {phoneNumberError ? (
+        <Text style={styles.errorText}>{phoneNumberError}</Text>
+      ) : null}
+
+      <View style={styles.dateInputContainer}>
+        <TextInput
+          ref={dateInputRef}
+          style={[styles.input, {flex: 1}]}
+          value={dateDisplay}
+          onFocus={() => setShowDatePicker(true)}
+          showSoftInputOnFocus={false}
+        />
+      </View>
       {showDatePicker && (
         <DateTimePicker
           value={bookingDate}
@@ -103,8 +233,11 @@ const BookingScreen = () => {
           onChange={onDateChange}
         />
       )}
+      {bookingDateError ? <Text style={styles.errorText}>{bookingDateError}</Text> : null}
+
 
       <TextInput
+        ref={timeInputRef}
         style={styles.input}
         value={timeDisplay}
         onFocus={() => setShowTimePicker(true)}
@@ -114,13 +247,22 @@ const BookingScreen = () => {
         <DateTimePicker
           value={bookingDate}
           mode="time"
-          is24Hour={true}
+          is24Hour={false}
           display="default"
           onChange={onTimeChange}
         />
       )}
 
-      <Button title="Book Now" onPress={handleBookNow} color={PRIMARY_COLOR} />
+      <Button
+        style={{height: 90}}
+        title="Book Now"
+        onPress={handleBookNow}
+        color={PRIMARY_COLOR}
+      />
+
+      {/* <TouchableOpacity style={styles.registerBtn} onPress={handleBookNow}>
+        <Text style={{ color: "white", fontWeight: 400 }}>Book Now</Text>
+      </TouchableOpacity> */}
     </View>
   );
 };
@@ -131,7 +273,27 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
+  },
+  errorText: {
+    color: 'red', // Change as needed
+    // Additional styling for error text
+  },
+  registerBtn: {
+    justifyContent: 'center',
+    alignItems: 'center',
     backgroundColor: PRIMARY_COLOR,
+    height: 40,
+  },
+  dateInputContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  clearDateButton: {
+    marginLeft: 10,
+    color: SECONDARY_COLOR, // Use your app's color scheme
+    fontWeight: 'bold',
   },
   input: {
     borderWidth: 1,
@@ -139,9 +301,27 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: 10,
     borderRadius: 5,
+    color: '#7B8788',
+    backgroundColor: 'white',
   },
   picker: {
     width: '100%',
-    marginBottom: 20,
+    marginBottom: 16,
+    borderWidth: 2,
+    color: 'Black',
+    height: 30,
+  },
+  pickerContainer: {
+    borderWidth: 1,
+    borderColor: 'white', // Bright border for the glossy effect
+    borderRadius: 5,
+    marginBottom: 10,
+    backgroundColor: '#EFEFEF', // Light background for the glossy effect
+    overflow: 'hidden', // Ensure the picker's content doesn't overflow the rounded borders
+    elevation: 4, // Adds shadow for Android (optional, for depth)
+    shadowColor: '#000', // Shadow for iOS
+    shadowOffset: {width: 0, height: 2}, // Shadow for iOS
+    shadowOpacity: 0.1, // Shadow for iOS
+    shadowRadius: 4, // Shadow for iOS
   },
 });

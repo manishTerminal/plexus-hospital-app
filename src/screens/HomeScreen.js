@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
   },
   safeArea: {
     flex: 1,
-    backgroundColor: "#2B2B52"
+    // backgroundColor: "#2B2B52"
   },
   container: {
     height: "20%",
@@ -68,9 +68,11 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
   tab: {
-    shadowColor: "black",
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 1,
+    elevation: 4, // Adds shadow for Android (optional, for depth)
+    shadowColor: '#000', // Shadow for iOS
+    shadowOffset: { width: 0, height: 2 }, // Shadow for iOS
+    shadowOpacity: 0.1, // Shadow for iOS
+    shadowRadius: 4, 
     backgroundColor: "#fff",
     width: "90%",
     padding: 16,
