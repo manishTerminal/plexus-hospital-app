@@ -104,13 +104,18 @@ const styles = StyleSheet.create({
     alignItems: "center",
     color: "#000000"
   },
-  inputField: {
-    borderWidth: 1,
-    width: "90%",
-    color: "#000000",
-    borderRadius: 8,
-    marginBottom: 16,
-  },
+    inputField: {
+      borderWidth: 1,
+      borderColor: '#000', // Lighter border color
+      width: "90%",
+      color: "#000000",
+      borderRadius: 8,
+      marginBottom: 16,
+      padding: 10, // Add some padding
+      backgroundColor: '#FFFFFF', // Optional: Change background color
+      fontSize: 16, // Increase font size for better readability
+    },
+  
   registerBtn: {
     justifyContent: "center",
     alignItems: "center",
