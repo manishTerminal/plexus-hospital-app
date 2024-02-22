@@ -14,6 +14,7 @@ import {Picker} from '@react-native-picker/picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {PRIMARY_COLOR, SECONDARY_COLOR} from '../utils/Colors';
 import LinearGradient from 'react-native-linear-gradient';
+import auth from '@react-native-firebase/auth';
 
 const BookingScreen = ({navigation}) => {
   const [doctors, setDoctors] = useState([]);
@@ -73,9 +74,14 @@ const BookingScreen = ({navigation}) => {
       isValid = false;
     }
 
-    // Add your logic for validating bookingDate if necessary
 
     if (!isValid) return; // Stop the booking process if validation fail
+
+    const user = auth().currentUser;
+    if (!user) {
+      Alert.alert('Error', 'You must be logged in to book an appointment.');
+      return;
+    }
 
     if (selectedDoctor === 'placeholder') {
       Alert.alert('Error', 'Please select a doctor.');
@@ -89,6 +95,7 @@ const BookingScreen = ({navigation}) => {
           patientName,
           phoneNumber,
           bookingDate: firestore.Timestamp.fromDate(bookingDate),
+          userId: user.uid,
         });
       // Alert.alert('Success', 'Appointment booked successfully');
 
@@ -233,8 +240,9 @@ const BookingScreen = ({navigation}) => {
           onChange={onDateChange}
         />
       )}
-      {bookingDateError ? <Text style={styles.errorText}>{bookingDateError}</Text> : null}
-
+      {bookingDateError ? (
+        <Text style={styles.errorText}>{bookingDateError}</Text>
+      ) : null}
 
       <TextInput
         ref={timeInputRef}

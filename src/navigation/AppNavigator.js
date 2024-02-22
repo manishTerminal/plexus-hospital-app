@@ -6,6 +6,7 @@ import ContactUs from '../screens/ContactUs';
 import Feedback from '../screens/Feedback';
 import MyTabs from './MyTabs';
 import SuccessfulBooking from '../screens/Successfulbooking';
+import MyAppointments from '../screens/MyAppointments';
 const Stack = createStackNavigator();
 
 const AppNavigator = () => {
@@ -16,6 +17,7 @@ const AppNavigator = () => {
       <Stack.Screen name="ContactUs" component={ContactUs} />
       <Stack.Screen name="Feedback" component={Feedback} />
       <Stack.Screen name="SuccessfulBooking" component={SuccessfulBooking} />
+      <Stack.Screen name="MyAppointments" component={MyAppointments} />
     </Stack.Navigator>
   )
 }

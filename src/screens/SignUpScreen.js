@@ -3,6 +3,8 @@ import React, { useState } from 'react'
 import { BUTTON_COLOR, PRIMARY_COLOR } from '../utils/Colors'
 import auth from '@react-native-firebase/auth';
 import { useNavigation } from '@react-navigation/native';
+import firestore from '@react-native-firebase/firestore';
+
 
 const SignUpScreen = () => {
   const navigation = useNavigation();
@@ -35,23 +37,32 @@ const SignUpScreen = () => {
 
   const createUser = async () => {
     if (validateInput()) {
-      // Proceed with user creation
-      await auth()
-        .createUserWithEmailAndPassword(email, password)
-        .then(() => {
-          Alert.alert('User account created & signed in!');
-        })
-        .catch(error => {
-          if (error.code === 'auth/email-already-in-use') {
-            Alert.alert('That email address is already in use!');
-          } else if (error.code === 'auth/invalid-email') {
-            Alert.alert('That email address is invalid!');
-          } else {
-            Alert.alert(error.message);
-          }
+      try {
+        const userCredential = await auth().createUserWithEmailAndPassword(email, password);
+        const user = userCredential.user;
+  
+        // Create or update the user document in Firestore
+        await firestore().collection('Users').doc(user.uid).set({
+          email: email, // Store the email in the user document
+          // Add any other user details here
         });
+  
+        Alert.alert('User account created & signed in!');
+  
+        // Optionally, navigate to another screen here or reset the form fields
+      } catch (error) {
+        if (error.code === 'auth/email-already-in-use') {
+          Alert.alert('That email address is already in use!');
+        } else if (error.code === 'auth/invalid-email') {
+          Alert.alert('That email address is invalid!');
+        } else {
+          // General error handler
+          Alert.alert(error.message);
+        }
+      }
     }
   };
+  
 
   return (
     <View style={styles.container}>
@@ -78,6 +89,7 @@ const SignUpScreen = () => {
           setPassword(txt);
           setPasswordError(null); // Clear error when typing
         }}
+        secureTextEntry={true}
       />
       {passwordError && <Text style={styles.errorText}>{passwordError}</Text>}
 
