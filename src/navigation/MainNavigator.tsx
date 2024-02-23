@@ -17,7 +17,7 @@ const MainNavigator = () => {
         <STACK.Screen name="Splash" component={Splash} options={{headerShown:false}}></STACK.Screen>
         <STACK.Screen name="Signup" component={SignUpScreen} options={{headerShown:false}}></STACK.Screen>
         <STACK.Screen name="Signin" component={SignInScreen} options={{headerShown:false}}></STACK.Screen>
-        <STACK.Screen name="Home" component={HomeScreen} options={{headerShown:false}}></STACK.Screen>
+        {/* <STACK.Screen name="Home" component={HomeScreen} options={{headerShown:false}}></STACK.Screen> */}
 
       </STACK.Navigator>
   

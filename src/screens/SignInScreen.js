@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import { PRIMARY_COLOR } from '../utils/Colors'
 import auth from '@react-native-firebase/auth';
 import { useNavigation } from '@react-navigation/native';
+import Toast from 'react-native-toast-message';
 
 const SignInScreen = () => {
   const navigation = useNavigation()
@@ -40,8 +41,12 @@ const SignInScreen = () => {
         .then(() => {
           navigation.navigate("Home");
         })
-        .catch(() => {
-          Alert.alert("Wrong username and password.");
+        .catch((error) => {
+          Toast.show({
+            type: 'error',
+            text1: 'Login failed',
+            text2: "Wrong username and password.",
+          });
         });
     }
   };
@@ -75,9 +80,13 @@ const SignInScreen = () => {
       />
       {passwordError && <Text style={styles.errorText}>{passwordError}</Text>}
 
-      <TouchableOpacity style={styles.registerBtn} onPress={() => userSignIn()}>
-        <Text style={{ color: "white", fontWeight: 400 }}>Log In</Text>
+      <TouchableOpacity style={styles.loginBtn} onPress={() => userSignIn()}>
+        <Text style={{ color: "white", fontWeight: 600 }}>Log In</Text>
       </TouchableOpacity>
+      <TouchableOpacity style={styles.registerBtn} onPress={()=>navigation.navigate("Signup")}>
+        <Text style={{ color:PRIMARY_COLOR, fontWeight: 600, }}>Register</Text>
+      </TouchableOpacity>
+      <Toast ref={(ref) => Toast.setRef(ref)} />
     </View>
   );
 };
@@ -89,24 +98,38 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    color: "#000000"
+    color: "#000000",
+    backgroundColor:"#e4edeb"
   },
   inputField: {
     borderWidth: 1,
+    borderColor:"#DAE0E2",
     width: "90%",
     color: "#000000",
     borderRadius: 8,
-    marginBottom: 16,
+    marginBottom: 12,
+    borderRadius:8
   },
-  registerBtn: {
+  loginBtn: {
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: PRIMARY_COLOR,
     width: "90%",
     height: 40,
+    borderRadius:8
+  },
+  registerBtn: {
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "white",
+    width: "90%",
+    height: 40,
+    marginTop: 16,
+    borderWidth:1,
+    borderRadius:8
   },
   errorText: {
     color: 'red',
-    marginTop: 5,
+    marginBottom: 3,
   },
 });

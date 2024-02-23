@@ -3,6 +3,7 @@ import React from 'react';
 import auth from '@react-native-firebase/auth';
 import { useNavigation } from '@react-navigation/native';
 import Divider from '../utils/Divider';
+import { SECONDARY_COLOR } from '../utils/Colors';
 
 const SettingsScreen = () => {
   const navigation = useNavigation();
@@ -32,18 +33,20 @@ const SettingsScreen = () => {
       <Divider/>
       <TouchableOpacity
       onPress={handleLogout}>
-        <Text style={styles.tab}>Logout</Text>
+        <Text style={[styles.tab, styles.logout]}>Logout</Text>
       </TouchableOpacity>
     </View>
-  );
+  )
 };
 
 const styles = StyleSheet.create({
   container: {
-
-    // flex: 1,
-    // justifyContent: 'center',
-    // alignItems: 'center',
+    backgroundColor:"#e4edeb",
+    height:"100%"
+  },
+  logout:{
+    color:SECONDARY_COLOR
+    
   },
   tab:{
     color:"black",

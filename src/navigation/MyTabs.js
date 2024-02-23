@@ -31,17 +31,28 @@ const MyTabs = () => {
 
           return <Image source={iconSource} style={{ width: size, height: size, tintColor: color }} />;
         },
+
+        tabBarActiveTintColor: "#691C81",
+        tabBarInactiveBackgroundColor: "#d5ebe7",
+        tabBarInactiveTintColor: "#7B8788",
+
+        tabBarItemStyle: {
+          paddingBottom:4
+        },
+        tabBarHideOnKeyboard: true,
+        // headerShown:false
       })}
-      tabBarOptions={{
-        activeTintColor: '#691C81',
-        inactiveTintColor: 'gray',
-        labelStyle: {
-          fontSize: 12,
-        },
-        style: {
-          height: 60,
-        },
-      }}
+      // tabBarOptions={{
+      //   activeTintColor: '#691C81',
+      //   inactiveTintColor: 'gray',
+      //   labelStyle: {
+      //     marginBottom:4
+      //   },
+      //   style: {
+      //     height: 60,
+      //   },
+      // }}
+      
     >
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="Booking" component={Booking} />

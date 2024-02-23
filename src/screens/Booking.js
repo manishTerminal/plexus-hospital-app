@@ -167,6 +167,7 @@ const BookingScreen = ({navigation}) => {
 
   return (
     <View style={styles.container}>
+    <Text style={styles.title}>Doctors list</Text>
       <LinearGradient
         colors={['#44b678', '#44b678']} // Gradient colors
         start={{x: 0, y: 0}}
@@ -194,6 +195,7 @@ const BookingScreen = ({navigation}) => {
       {doctorError ? <Text style={styles.errorText}>{doctorError}</Text> : null}
       {/* </View> */}
 
+      <Text style={styles.title}>Patient name</Text>
       <TextInput
         style={styles.input}
         value={patientName}
@@ -202,12 +204,13 @@ const BookingScreen = ({navigation}) => {
           setPatientNameError(''); // Clear error on change
         }}
         placeholderTextColor="#7B8788"
-        placeholder="Patient Name"
+        placeholder="Enter patient name"
       />
       {patientNameError ? (
         <Text style={styles.errorText}>{patientNameError}</Text>
       ) : null}
 
+      <Text style={styles.title}>Phone number</Text>
       <TextInput
         style={styles.input}
         value={phoneNumber}
@@ -215,7 +218,7 @@ const BookingScreen = ({navigation}) => {
           setPhoneNumber(text);
           setPhoneNumberError(''); // Clear error on change
         }}
-        placeholder="Phone Number"
+        placeholder="Enter phone number"
         placeholderTextColor="#7B8788"
         keyboardType="phone-pad"
       />
@@ -223,6 +226,7 @@ const BookingScreen = ({navigation}) => {
         <Text style={styles.errorText}>{phoneNumberError}</Text>
       ) : null}
 
+      <Text style={styles.title}>Booking date</Text>
       <View style={styles.dateInputContainer}>
         <TextInput
           ref={dateInputRef}
@@ -244,6 +248,7 @@ const BookingScreen = ({navigation}) => {
         <Text style={styles.errorText}>{bookingDateError}</Text>
       ) : null}
 
+      <Text style={styles.title}>Booking time</Text>
       <TextInput
         ref={timeInputRef}
         style={styles.input}
@@ -261,16 +266,9 @@ const BookingScreen = ({navigation}) => {
         />
       )}
 
-      <Button
-        style={{height: 90}}
-        title="Book Now"
-        onPress={handleBookNow}
-        color={PRIMARY_COLOR}
-      />
-
-      {/* <TouchableOpacity style={styles.registerBtn} onPress={handleBookNow}>
-        <Text style={{ color: "white", fontWeight: 400 }}>Book Now</Text>
-      </TouchableOpacity> */}
+      <TouchableOpacity style={styles.registerBtn} onPress={handleBookNow}>
+        <Text style={{ color: "white", fontWeight: 600 }}>Book Now</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -281,6 +279,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
+    backgroundColor:"#e4edeb"
   },
   errorText: {
     color: 'red', // Change as needed
@@ -291,6 +290,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: PRIMARY_COLOR,
     height: 40,
+    borderRadius:0
   },
   dateInputContainer: {
     flexDirection: 'row',
@@ -305,7 +305,7 @@ const styles = StyleSheet.create({
   },
   input: {
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: '#DAE0E2',
     padding: 10,
     marginBottom: 10,
     borderRadius: 5,
@@ -320,7 +320,7 @@ const styles = StyleSheet.create({
     height: 30,
   },
   pickerContainer: {
-    borderWidth: 1,
+    // borderWidth: 1,
     borderColor: 'white', // Bright border for the glossy effect
     borderRadius: 5,
     marginBottom: 10,
@@ -332,4 +332,9 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1, // Shadow for iOS
     shadowRadius: 4, // Shadow for iOS
   },
+  title:{
+    color:"#2C3335",
+    fontSize:16,
+    marginBottom:4
+  }
 });
