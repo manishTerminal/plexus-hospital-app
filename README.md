@@ -1,3 +1,6 @@
+##Download APK for android from google drive - 
+<a href="https://drive.google.com/file/d/1FWs4DA3AzQnItWAoTIgFwHArwkQQuYWE/view?usp=sharing">DOWNLOAD NOW</a>
+
 <img src="./assets/readme/1.jpg" width="500"/>
 <img src="./assets/readme/2.jpg" width="500"/>
 <img src="./assets/readme/3.jpg" width="500"/>
